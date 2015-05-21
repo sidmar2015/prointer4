@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
@@ -10,35 +10,47 @@
         android:layout_height="wrap_content"
         android:background="#666"
         android:paddingLeft="5dp"
-        android:text="Select btSerial device from paired devices:"
+        android:text="Selecione o dispositivo:"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#fff"
         android:visibility="gone" />
 
-    <ListView
-        android:id="@+id/paired_devices"
+    <RelativeLayout
+        android:id="@+id/relativeLayout1"
         android:layout_width="match_parent"
-        android:layout_height="192dp"
-        android:layout_weight="0.15"
-        android:stackFromBottom="false" />
+        android:layout_height="wrap_content"
+        android:gravity="center" >
+    </RelativeLayout>
 
     <TextView
         android:id="@+id/connecting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/relativeLayout1"
+        android:layout_marginTop="23dp"
+        android:text="         "
         android:textAppearance="?android:attr/textAppearanceLarge" />
 
-    <LinearLayout
+    <ListView
+        android:id="@+id/paired_devices"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center" >
-    </LinearLayout>
+        android:layout_height="192dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/connecting"
+        android:layout_marginTop="35dp"
+        android:layout_weight="0.00"
+        android:stackFromBottom="false" >
 
-    <TextView
-        android:id="@+id/infoText"
+    </ListView>
+
+    <Button
+        android:id="@+id/btnConsultar"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Se o dispositivo não estiver na lista. Configure-o em configurações Bluetooth"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:layout_height="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="58dp"
+        android:text="Consultar Acessos" />
 
-</LinearLayout>
+</RelativeLayout>

@@ -7,53 +7,31 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin" >
 
+    <TextView
+        android:id="@+id/txvId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/edtSenha"
+        android:layout_alignLeft="@+id/edtSenha"
+        android:layout_marginBottom="36dp"
+        android:text="Senha" />
+
     <EditText
         android:id="@+id/edtSenha"
-        android:layout_width="wrap_content"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="61dp"
         android:ems="10"
-        android:inputType="numberPassword" >
-
-        <requestFocus />
-    </EditText>
-
-    <TextView
-        android:id="@+id/txvSenha"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/edtSenha"
-        android:layout_alignLeft="@+id/btnConsultar"
-        android:layout_marginBottom="35dp"
-        android:text="Senha" />
+        android:inputType="numberPassword" />
 
     <ImageButton
         android:id="@+id/btnAcessar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_below="@+id/edtSenha"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="46dp"
         android:src="@drawable/cadeado_fechado" />
-
-    <Button
-        android:id="@+id/btnConectar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btnConsultar"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="39dp"
-        android:text="Conectar" />
-
-    <Button
-        android:id="@+id/btnConsultar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/btnAcessar"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="33dp"
-        android:text="Consultar Acessos" />
 
 </RelativeLayout>

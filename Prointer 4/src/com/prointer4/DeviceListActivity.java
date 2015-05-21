@@ -1,6 +1,7 @@
 package com.prointer4;
 
 import java.util.Set;
+
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -21,13 +22,13 @@ public class DeviceListActivity extends Activity {
     // Debugging for LOGCAT
     private static final String TAG = "DeviceListActivity";
     private static final boolean D = true;
-    
-  
+        
+    private Button btnConsultar;
     // declare button for launching website and textview for connection status
     Button tlbutton;
     TextView textView1;
     
-    // EXTRA string to send on to mainactivity
+    // EXTRA string to send on to main activity
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
 
     // Member fields
@@ -38,6 +39,21 @@ public class DeviceListActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.device_list);
+        
+        btnConsultar = (Button)findViewById(R.id.btnConsultar);
+		
+		btnConsultar.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				
+				try{
+					startActivity(new Intent(v.getContext(), ConsultarActivity.class));
+				}catch(Exception ex){
+					Toast.makeText(getApplicationContext(), ex.getMessage(), Toast.LENGTH_SHORT).show();
+				}
+			}
+		});
     }
     
     @Override
@@ -89,14 +105,15 @@ public class DeviceListActivity extends Activity {
             // Make an intent to start next activity while taking an extra which is the MAC address.
 			Intent i = new Intent(DeviceListActivity.this, MainActivity.class);
             i.putExtra(EXTRA_DEVICE_ADDRESS, address);
+            //inicia a main activity
 			startActivity(i);   
         }
     };
 
     private void checkBTState() {
         // Check device has Bluetooth and that it is turned on
-    	 mBtAdapter=BluetoothAdapter.getDefaultAdapter(); // CHECK THIS OUT THAT IT WORKS!!!
-        if(mBtAdapter==null) { 
+    	 mBtAdapter = BluetoothAdapter.getDefaultAdapter(); // CHECK THIS OUT THAT IT WORKS!!!
+        if(mBtAdapter == null) { 
         	Toast.makeText(getBaseContext(), "Este dispositivo não suporta Bluetooth", Toast.LENGTH_SHORT).show();
         } else {
           if (mBtAdapter.isEnabled()) {

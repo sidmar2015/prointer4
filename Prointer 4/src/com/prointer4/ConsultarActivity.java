@@ -1,43 +1,48 @@
 package com.prointer4;
 
+import java.util.List;
+
 import android.app.Activity;
+import android.app.ListActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 public class ConsultarActivity extends Activity {
 
+	private DAO bd;
+	private ListView consulta;
+		
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_consultar);
-		
+								
+		try{
 		//cria a instancia do manipulador de banco de dados
-		DAO banco_dados = new DAO();
+		bd = new DAO(this);
 		//cria a instancia do listview para exibir os dados
-		ListView consulta = (ListView)findViewById(R.id.lvwConsultar);
-		//cria a instancia de um cursor para efetuar as consultas
-		Cursor cursor = banco_dados.consultar(this);
-		 //define de onde vem os dados
-		 String[] from = { "_id", "posto", "data", "hora"};
-		 //define para onde vão os dados
-	        int[] to = {R.id.txvSenha, R.id.txvPosto, R.id.txvData, R.id.txvHora};
+		consulta = (ListView)findViewById(R.id.lvwConsultar);		
+		List<Acesso> list = bd.consultar();
+		consulta.setAdapter(new AcessoAdapter(this, list));
 		
-		//cria um cursor adapter para passar os dados para a listview
-		SimpleCursorAdapter ad = new SimpleCursorAdapter(getBaseContext(), R.layout.model_consultar, cursor, from, to);
-		
-		//adiciona os dados ao listview
-		consulta.setAdapter(ad);
-		
-		
-		
-		
-		
+		 }catch(Exception ex){
+			 Toast.makeText(this, ex.getMessage(), Toast.LENGTH_SHORT).show();
+		 }
+	
 	}
 
 	@Override
@@ -58,4 +63,5 @@ public class ConsultarActivity extends Activity {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+	
 }

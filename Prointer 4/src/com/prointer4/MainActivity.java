@@ -3,6 +3,9 @@ package com.prointer4;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.UUID;
 
 import android.annotation.SuppressLint;
@@ -18,6 +21,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
   
@@ -27,18 +31,17 @@ public class MainActivity extends Activity {
   Handler bluetoothIn;
 
   final int handlerState = 0;        				 //usado para identificar a handler message
-  private BluetoothAdapter btAdapter = null;
-  private BluetoothSocket btSocket = null;
-  private StringBuilder recDataString = new StringBuilder();
-  private Button btnConsultar;
-  private Button btnConectar;
-  private Button btnAcessar;
-  private EditText edtSenha; 
-  private String senha;
-  private String imei;
-  private String deviceName;
-  private boolean acesso = false;
-     
+  private BluetoothAdapter  btAdapter = null;
+  private BluetoothSocket   btSocket = null;
+  private StringBuilder 	recDataString = new StringBuilder();
+  private ImageButton 		btnAcessar;
+  private EditText 			edtSenha; 
+  private String 			senha;
+  private String 			imei;
+  private DAO bd;
+  private Acesso acessos = new Acesso();
+  private Date data = new Date();
+       
   private ConnectedThread mConnectedThread;
     
   // SPP UUID service - this should work for most devices
@@ -53,78 +56,57 @@ public class MainActivity extends Activity {
   
     setContentView(R.layout.activity_main);
     
-    btnAcessar   = (Button)findViewById(R.id.btnAcessar);
-    btnConsultar = (Button)findViewById(R.id.btnConsultar);
-    btnConectar  = (Button)findViewById(R.id.btnConectar);
+    bd = new DAO(this);
+    btnAcessar   = (ImageButton)findViewById(R.id.btnAcessar);
     edtSenha     = (EditText)findViewById(R.id.edtSenha);
-    deviceName   = btAdapter.getName();
-    
-    //se o Bluetooth estiver desconectado desabilita o botão de acesso
-    try{        
-        if(!btSocket.isConnected()){
-        btnAcessar.setActivated(false);//desativa o click do botão de acesso
-        btnAcessar.setBackgroundResource(R.drawable.cadeado_fechado);
-        }else{
-        	btnAcessar.setActivated(true);//habilita o click do botão de acesso
-            btnAcessar.setBackgroundResource(R.drawable.cadeado_fechado);
-        }}catch(Exception ex){
-        	Toast.makeText(getApplicationContext(), ex.getMessage().toString(), Toast.LENGTH_LONG).show();
-        }
-    
+             
     //acessar
     btnAcessar.setOnClickListener(new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
+			
 			ObterIMEI oImei = new ObterIMEI();
 			imei = oImei.getIMEI(getApplicationContext());
 			senha = edtSenha.getText().toString();
-			if(senha.length() != 3){
+			
+			//obtem os dados de acesso para salvar no banco
+			//acessos.setLocal(btAdapter.getName());
+			acessos.setData(data.getDate()+"/"+(data.getMonth()+1)+"/"+(data.getYear()+1900));
+			acessos.setHora(data.getHours()+":"+data.getMinutes()+":"+data.getSeconds());
+			
+			//se o tamanho da senha estiver incorreto exibe uma mensagem
+			if(senha.length() != 4){
 				Toast.makeText(getApplicationContext(), "O TAMANHO DA SENHA ESTÁ INCORRETO", Toast.LENGTH_LONG).show();
+			//senão envia para o hardware
 			}else{
-			mConnectedThread.write(imei+senha);
-			Toast.makeText(getApplicationContext(), "SOLICITAÇÃO ENVIADA", Toast.LENGTH_LONG).show();
+				mConnectedThread.write(imei+senha);
+				Toast.makeText(getApplicationContext(), "SOLICITAÇÃO ENVIADA", Toast.LENGTH_LONG).show();
+				bd.inserir(acessos);
+				Toast.makeText(getApplicationContext(), "DADOS DE ACESSO SALVOS", Toast.LENGTH_LONG).show();
 			}
 		}
 	});
     
-    //acessar a lista de dispositivos
-    btnConectar.setOnClickListener(new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			Intent conectar = new Intent();
-			conectar.setAction(".DeviceListActivity");
-			startActivity(conectar);
-		}
-	});
-    
-    //consultar os acessos
-    btnConsultar.setOnClickListener(new View.OnClickListener() {
-		@Override
-		public void onClick(View v) {
-			Intent consultar = new Intent();
-			consultar.setAction(".ConsultarActivity");
-			startActivity(consultar);
-		}
-	});
-
+  
     bluetoothIn = new Handler() {
+    	//obtem a mensagem recebida pelo sistema
         public void handleMessage(android.os.Message msg) {
-            if (msg.what == handlerState) {										//if message is what we want
-            	String readMessage = (String) msg.obj;                          // msg.arg1 = bytes from connect thread
+            if (msg.what == handlerState) {										//se a mensagem for o que procuramos
+            	String readMessage = (String) msg.obj;                          // msg.arg1 = bytes da connect thread
                 recDataString.append(readMessage);      							//keep appending to string until ~
                 int endOfLineIndex = recDataString.indexOf("~");                    // determine the end-of-line
                 if (endOfLineIndex > 0) {                                           // make sure there data before ~
                     String dataInPrint = recDataString.substring(0, endOfLineIndex);    // extract string
-                    //txtString.setText("Data Received = " + dataInPrint);           		
+                              		
                     int dataLength = dataInPrint.length();							//get length of data received
-                    //txtStringLength.setText("String Length = " + String.valueOf(dataLength));
+                    
                     
                     if (recDataString.charAt(0) == '#')								//if it starts with # we know it is what we are looking for
                     {
                     	String mensagem = recDataString.toString();
                     	//string recebida
                     	if(mensagem.contains("autorizado")){
-                    		btnAcessar.setBackgroundResource(R.drawable.cadeado_aberto);
+                    		
                     		Toast.makeText(getApplicationContext(), "ACESSO LIBERADO !!!", Toast.LENGTH_LONG).show();
                     	}
                     	if(mensagem.contains("negado")){
@@ -146,9 +128,9 @@ public class MainActivity extends Activity {
 
    
   private BluetoothSocket createBluetoothSocket(BluetoothDevice device) throws IOException {
-      
+	  //cria uma conexão de saída segura com BT usando UUID
       return  device.createRfcommSocketToServiceRecord(BTMODULEUUID);
-      //cria uma conexão de saída segura com BT usando UUID
+      
   }
   
     
@@ -165,11 +147,14 @@ public class MainActivity extends Activity {
 
     //cria o dispositivo e seta o MAC address
     BluetoothDevice device = btAdapter.getRemoteDevice(address);
+    //obtem o nome do dispositivo para salvar no banco
+    //deviceName = device.getName();
+    acessos.setLocal(device.getName());
      
     try {
         btSocket = createBluetoothSocket(device);
     } catch (IOException e) {
-    	Toast.makeText(getBaseContext(), "Socket creation failed", Toast.LENGTH_LONG).show();
+    	Toast.makeText(getBaseContext(), "FALHA AO CRIAR SOCKET", Toast.LENGTH_LONG).show();
     }  
     // Estabelece a conexão com o socket Bluetooth 
     try 
@@ -266,6 +251,8 @@ public class MainActivity extends Activity {
             	
               }
         	}
-    	}
+        }
+  
+  		
 }
     
