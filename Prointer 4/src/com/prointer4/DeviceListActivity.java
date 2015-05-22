@@ -112,18 +112,17 @@ public class DeviceListActivity extends Activity {
 
     private void checkBTState() {
         // Check device has Bluetooth and that it is turned on
-    	 mBtAdapter = BluetoothAdapter.getDefaultAdapter(); // CHECK THIS OUT THAT IT WORKS!!!
+    	 mBtAdapter = BluetoothAdapter.getDefaultAdapter(); // checa se o dispositivo possui bluetooth
         if(mBtAdapter == null) { 
         	Toast.makeText(getBaseContext(), "Este dispositivo não suporta Bluetooth", Toast.LENGTH_SHORT).show();
         } else {
           if (mBtAdapter.isEnabled()) {
             Log.d(TAG, "...Bluetooth Ligado...");
           } else {
-            //Prompt user to turn on Bluetooth
+            //pede autorização para ligar o bluetooth
             Intent enableBtIntent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-            startActivityForResult(enableBtIntent, 1);
- 
-            }
+               startActivityForResult(enableBtIntent, 1);
+             }
           }
         }
 }

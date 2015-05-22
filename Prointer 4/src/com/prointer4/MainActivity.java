@@ -10,10 +10,12 @@ import java.util.UUID;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -41,7 +43,7 @@ public class MainActivity extends Activity {
   private DAO bd;
   private Acesso acessos = new Acesso();
   private Date data = new Date();
-       
+         
   private ConnectedThread mConnectedThread;
     
   // SPP UUID service - this should work for most devices
@@ -59,7 +61,7 @@ public class MainActivity extends Activity {
     bd = new DAO(this);
     btnAcessar   = (ImageButton)findViewById(R.id.btnAcessar);
     edtSenha     = (EditText)findViewById(R.id.edtSenha);
-             
+                 
     //acessar
     btnAcessar.setOnClickListener(new View.OnClickListener() {
 		@Override
@@ -76,13 +78,12 @@ public class MainActivity extends Activity {
 			
 			//se o tamanho da senha estiver incorreto exibe uma mensagem
 			if(senha.length() != 4){
-				Toast.makeText(getApplicationContext(), "O TAMANHO DA SENHA ESTÁ INCORRETO", Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(), "O TAMANHO DA SENHA ESTÁ INCORRETO", Toast.LENGTH_SHORT).show();
 			//senão envia para o hardware
 			}else{
 				mConnectedThread.write(imei+senha);
-				Toast.makeText(getApplicationContext(), "SOLICITAÇÃO ENVIADA", Toast.LENGTH_LONG).show();
-				bd.inserir(acessos);
-				Toast.makeText(getApplicationContext(), "DADOS DE ACESSO SALVOS", Toast.LENGTH_LONG).show();
+				Toast.makeText(getApplicationContext(), "SOLICITAÇÃO ENVIADA", Toast.LENGTH_SHORT).show();
+				
 			}
 		}
 	});
@@ -93,25 +94,46 @@ public class MainActivity extends Activity {
         public void handleMessage(android.os.Message msg) {
             if (msg.what == handlerState) {										//se a mensagem for o que procuramos
             	String readMessage = (String) msg.obj;                          // msg.arg1 = bytes da connect thread
-                recDataString.append(readMessage);      							//keep appending to string until ~
-                int endOfLineIndex = recDataString.indexOf("~");                    // determine the end-of-line
-                if (endOfLineIndex > 0) {                                           // make sure there data before ~
-                    String dataInPrint = recDataString.substring(0, endOfLineIndex);    // extract string
+                recDataString.append(readMessage);      							//continua o  append da string até ~
+                int endOfLineIndex = recDataString.indexOf("~");                    // determina o fim da linha
+                if (endOfLineIndex > 0) {                                           // garante que está antes de ~
+                    String dataInPrint = recDataString.substring(0, endOfLineIndex);    // extrai a string
                               		
-                    int dataLength = dataInPrint.length();							//get length of data received
+                    int dataLength = dataInPrint.length();							//tamanho dos dados recebidos
                     
                     
-                    if (recDataString.charAt(0) == '#')								//if it starts with # we know it is what we are looking for
+                    
+                    if (recDataString.charAt(0) == '#')								//se iniciar com # é a mensagem que estamos esperando
                     {
-                    	String mensagem = recDataString.toString();
-                    	//string recebida
-                    	if(mensagem.contains("autorizado")){
+                    	//verifica a mensagem recebida do hardware
+                    	if(recDataString.toString().contains("#autorizado~")){
+                    		//se o acesso for autorizado, exibe a msg e salva no banco de dados
+                    		Toast.makeText(getApplicationContext(), "ACESSO LIBERADO !!!", Toast.LENGTH_SHORT).show();
+                    		bd.inserir(acessos);
+            				Toast.makeText(getApplicationContext(), "DADOS DE ACESSO SALVOS", Toast.LENGTH_SHORT).show();
+                    	}
+                    	if(recDataString.toString().contains("#negado~")){
+                    		//se o acesso for negado exibe um alerta
                     		
-                    		Toast.makeText(getApplicationContext(), "ACESSO LIBERADO !!!", Toast.LENGTH_LONG).show();
-                    	}
-                    	if(mensagem.contains("negado")){
-                    		Toast.makeText(getApplicationContext(), "ACESSO NEGADO !!!", Toast.LENGTH_LONG).show();
-                    	}
+                  			AlertDialog.Builder builder1 = new AlertDialog.Builder(btnAcessar.getContext());
+                            builder1.setMessage("Acesso negado. Tentar novamente, ou sair da aplicação?");
+                            builder1.setCancelable(true);
+                            builder1.setPositiveButton("Sim",
+                                    new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            });
+                            builder1.setNegativeButton("Sair",
+                                    new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    finish();
+                                }
+                            });
+                            // exibe o alert dialog
+                            AlertDialog alert11 = builder1.create();
+                            alert11.show();
+                    	}                    	
                     }
                     recDataString.delete(0, recDataString.length()); 					//limpa todas as strings do buffer 
                    
@@ -187,6 +209,7 @@ public class MainActivity extends Activity {
     	
     }
   }
+  
 
  //Checa se o Bluetooth do dispositivo está ligado, senão solicita que seja ligado
   private void checkBTState() {
@@ -201,6 +224,7 @@ public class MainActivity extends Activity {
       }
     }
   }
+
   
   //cria uma nova classe thread
   public class ConnectedThread extends Thread {
@@ -222,7 +246,7 @@ public class MainActivity extends Activity {
             mmOutStream = tmpOut;
         }
         
-      
+        //método que inicia a thread
         public void run() {
             byte[] buffer = new byte[256];  
             int bytes; 
@@ -253,6 +277,8 @@ public class MainActivity extends Activity {
         	}
         }
   
+  
+
   		
 }
     

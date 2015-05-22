@@ -5,8 +5,11 @@ import java.util.List;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.webkit.WebView.FindListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -51,8 +54,8 @@ public class AcessoAdapter extends BaseAdapter {
 		TextView txvId = (TextView) layout.findViewById(R.id.txvId);
 		txvId.setText(list.get(position).getId());
 		
-		TextView txvPosto = (TextView) layout.findViewById(R.id.txvPosto);
-		txvPosto.setText(list.get(position).getLocal());
+		TextView txvLocal = (TextView) layout.findViewById(R.id.txvLocal);
+		txvLocal.setText(list.get(position).getLocal());
 		
 		TextView txvData = (TextView) layout.findViewById(R.id.txvData);
 		txvData.setText(list.get(position).getData());
@@ -60,7 +63,20 @@ public class AcessoAdapter extends BaseAdapter {
 		TextView txvHora = (TextView) layout.findViewById(R.id.txvHora);
 		txvHora.setText(list.get(position).getHora());
 		
+		layout.setOnClickListener(itemClickListener);
+		
 		return layout;
 	}
-
+	
+	// Item Click Listener para o listview
+    OnClickListener itemClickListener = new OnClickListener() {
+        
+		@Override
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			
+		}
+    };
+	
+	
 }

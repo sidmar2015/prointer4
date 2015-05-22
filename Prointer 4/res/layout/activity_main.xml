@@ -28,10 +28,10 @@
 
     <ImageButton
         android:id="@+id/btnAcessar"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
         android:layout_below="@+id/edtSenha"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/cadeado_fechado" />
+        android:background="@layout/cadeado" />
 
 </RelativeLayout>

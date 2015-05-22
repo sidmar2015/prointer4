@@ -22,23 +22,12 @@
         android:gravity="center" >
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/connecting"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/relativeLayout1"
-        android:layout_marginTop="23dp"
-        android:text="         "
-        android:textAppearance="?android:attr/textAppearanceLarge" />
-
     <ListView
         android:id="@+id/paired_devices"
         android:layout_width="match_parent"
-        android:layout_height="192dp"
+        android:layout_height="250dp"
         android:layout_alignParentLeft="true"
         android:layout_below="@+id/connecting"
-        android:layout_marginTop="35dp"
         android:layout_weight="0.00"
         android:stackFromBottom="false" >
 
@@ -46,11 +35,22 @@
 
     <Button
         android:id="@+id/btnConsultar"
-        android:layout_width="wrap_content"
+        android:layout_width="250dp"
         android:layout_height="60dp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="58dp"
-        android:text="Consultar Acessos" />
+        android:layout_marginBottom="57dp"
+        android:text="Histórico de Acessos" />
+
+    <TextView
+        android:id="@+id/connecting"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/relativeLayout1"
+        android:layout_marginTop="15dp"
+        android:text="     "
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:textColor="#00FF00" />
 
 </RelativeLayout>

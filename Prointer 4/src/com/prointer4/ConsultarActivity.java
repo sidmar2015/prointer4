@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class ConsultarActivity extends Activity {
@@ -30,7 +31,7 @@ public class ConsultarActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_consultar);
-								
+										
 		try{
 		//cria a instancia do manipulador de banco de dados
 		bd = new DAO(this);
@@ -38,7 +39,7 @@ public class ConsultarActivity extends Activity {
 		consulta = (ListView)findViewById(R.id.lvwConsultar);		
 		List<Acesso> list = bd.consultar();
 		consulta.setAdapter(new AcessoAdapter(this, list));
-		
+		consulta.setOnItemClickListener(myClickListener);	    	
 		 }catch(Exception ex){
 			 Toast.makeText(this, ex.getMessage(), Toast.LENGTH_SHORT).show();
 		 }
@@ -64,4 +65,9 @@ public class ConsultarActivity extends Activity {
 		return super.onOptionsItemSelected(item);
 	}
 	
+	private OnItemClickListener myClickListener = new OnItemClickListener() {
+        public void onItemClick(AdapterView<?> av, View v, int arg2, long arg3) {
+         
+        }
+    };
 }
