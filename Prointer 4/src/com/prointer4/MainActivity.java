@@ -68,6 +68,7 @@ public class MainActivity extends Activity {
 		public void onClick(View v) {
 			
 			ObterIMEI oImei = new ObterIMEI();
+			//obtem IMEI e a senha digitada no edit text
 			imei = oImei.getIMEI(getApplicationContext());
 			senha = edtSenha.getText().toString();
 			
@@ -109,8 +110,12 @@ public class MainActivity extends Activity {
                     	if(recDataString.toString().contains("#autorizado~")){
                     		//se o acesso for autorizado, exibe a msg e salva no banco de dados
                     		Toast.makeText(getApplicationContext(), "ACESSO LIBERADO !!!", Toast.LENGTH_SHORT).show();
+                    		try{
                     		bd.inserir(acessos);
             				Toast.makeText(getApplicationContext(), "DADOS DE ACESSO SALVOS", Toast.LENGTH_SHORT).show();
+                    		}catch(Exception ex){
+                    			Toast.makeText(getApplicationContext(), "ERRO AO SALVAR: "+ex.getMessage(), Toast.LENGTH_SHORT).show();
+                    		}
                     	}
                     	if(recDataString.toString().contains("#negado~")){
                     		//se o acesso for negado exibe um alerta
@@ -118,14 +123,12 @@ public class MainActivity extends Activity {
                   			AlertDialog.Builder builder1 = new AlertDialog.Builder(btnAcessar.getContext());
                             builder1.setMessage("Acesso negado. Tentar novamente, ou sair da aplicação?");
                             builder1.setCancelable(true);
-                            builder1.setPositiveButton("Sim",
-                                    new DialogInterface.OnClickListener() {
+                            builder1.setPositiveButton("Sim",new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     dialog.cancel();
                                 }
                             });
-                            builder1.setNegativeButton("Sair",
-                                    new DialogInterface.OnClickListener() {
+                            builder1.setNegativeButton("Sair",new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
                                     finish();
                                 }
@@ -277,6 +280,9 @@ public class MainActivity extends Activity {
         	}
         }
   
+  public void sendIMEI(){
+	  //mConnectedThread.write(imei+senha);
+  }
   
 
   		
